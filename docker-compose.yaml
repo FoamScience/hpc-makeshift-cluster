@@ -1,0 +1,96 @@
+services:
+  head:
+    container_name: slurm-head
+    hostname: head
+    build:
+      context: ./slurm-image
+      dockerfile: Dockerfile
+    environment:
+      - SLURM_HEAD_NODE=head
+    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmctld start && service slurmctld restart  && tail -f /dev/null"]
+    user: root
+    privileged: true
+    ports:
+      - "6817:6817" # SLURM controller port
+      - "6818:6818" # SLURM scheduler port
+    volumes:
+      - slurm-volume:/home/slurmuser
+    networks:
+      slurm-network:
+
+  # Compute nodes
+  compute-1:
+    hostname: "compute-1"
+    container_name: slurm-compute-1
+    build:
+      context: ./slurm-image
+      dockerfile: Dockerfile
+    environment:
+      - SLURM_HEAD_NODE=head
+    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+    user: root
+    privileged: true
+    depends_on:
+      - head
+    volumes:
+      - slurm-volume:/home/slurmuser
+    networks:
+      slurm-network:
+  compute-2:
+    hostname: "compute-2"
+    container_name: slurm-compute-2
+    build:
+      context: ./slurm-image
+      dockerfile: Dockerfile
+    environment:
+      - SLURM_HEAD_NODE=head
+    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+    user: root
+    privileged: true
+    depends_on:
+      - head
+    volumes:
+      - slurm-volume:/home/slurmuser
+    networks:
+      slurm-network:
+  compute-3:
+    hostname: "compute-3"
+    container_name: slurm-compute-3
+    build:
+      context: ./slurm-image
+      dockerfile: Dockerfile
+    environment:
+      - SLURM_HEAD_NODE=head
+    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+    user: root
+    privileged: true
+    depends_on:
+      - head
+    volumes:
+      - slurm-volume:/home/slurmuser
+    networks:
+      slurm-network:
+  compute-4:
+    hostname: "compute-4"
+    container_name: slurm-compute-4
+    build:
+      context: ./slurm-image
+      dockerfile: Dockerfile
+    environment:
+      - SLURM_HEAD_NODE=head
+    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+    user: root
+    privileged: true
+    depends_on:
+      - head
+    volumes:
+      - slurm-volume:/home/slurmuser
+    networks:
+      slurm-network:
+
+networks:
+  slurm-network:
+    driver: bridge
+
+volumes:
+  slurm-volume:
