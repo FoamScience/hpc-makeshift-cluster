@@ -5,14 +5,19 @@ services:
     build:
       context: ./slurm-image
       dockerfile: Dockerfile
+      args:
+        SLURM_TAG: 25-05-2-1
     environment:
       - SLURM_HEAD_NODE=head
-    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmctld start && service slurmctld restart  && tail -f /dev/null"]
+      - SLURM_NODE_COUNT=4
+    command: ["/head-entrypoint.sh"]
     user: root
     privileged: true
     ports:
       - "6817:6817" # SLURM controller port
       - "6818:6818" # SLURM scheduler port
+      - "6820:6820" # SLURM REST API (slurmrestd)
+      - "3306:3306"
     volumes:
       - slurm-volume:/home/slurmuser
     networks:
@@ -25,9 +30,12 @@ services:
     build:
       context: ./slurm-image
       dockerfile: Dockerfile
+      args:
+        SLURM_TAG: 25-05-2-1
     environment:
       - SLURM_HEAD_NODE=head
-    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+      - SLURM_NODE_COUNT=4
+    command: ["/compute-entrypoint.sh"]
     user: root
     privileged: true
     depends_on:
@@ -42,9 +50,12 @@ services:
     build:
       context: ./slurm-image
       dockerfile: Dockerfile
+      args:
+        SLURM_TAG: 25-05-2-1
     environment:
       - SLURM_HEAD_NODE=head
-    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+      - SLURM_NODE_COUNT=4
+    command: ["/compute-entrypoint.sh"]
     user: root
     privileged: true
     depends_on:
@@ -59,9 +70,12 @@ services:
     build:
       context: ./slurm-image
       dockerfile: Dockerfile
+      args:
+        SLURM_TAG: 25-05-2-1
     environment:
       - SLURM_HEAD_NODE=head
-    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+      - SLURM_NODE_COUNT=4
+    command: ["/compute-entrypoint.sh"]
     user: root
     privileged: true
     depends_on:
@@ -76,9 +90,12 @@ services:
     build:
       context: ./slurm-image
       dockerfile: Dockerfile
+      args:
+        SLURM_TAG: 25-05-2-1
     environment:
       - SLURM_HEAD_NODE=head
-    command: ["/bin/bash", "-c", "dbus-daemon --system --fork && service munge start && service slurmd start && tail -f /dev/null"]
+      - SLURM_NODE_COUNT=4
+    command: ["/compute-entrypoint.sh"]
     user: root
     privileged: true
     depends_on:
